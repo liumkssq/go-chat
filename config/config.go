@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Config 配置信息
@@ -28,17 +28,19 @@ type Server struct {
 }
 
 func New(filename string) *Config {
-
 	content, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}
 
 	var conf Config
-	if yaml.Unmarshal(content, &conf) != nil {
+	fmt.Printf("config.yaml: +%v\n", conf)
+	if err := yaml.Unmarshal(content, &conf); err != nil {
+		fmt.Printf("解析 config.yaml 读取错误: %v\n", err)
+		fmt.Printf("config.yaml: +%v\n", conf)
 		panic(fmt.Sprintf("解析 config.yaml 读取错误: %v", err))
 	}
-
+	fmt.Printf("config.yaml: +%v\n", conf)
 	return &conf
 }
 

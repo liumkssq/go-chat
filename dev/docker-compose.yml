@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: myminioadmin
+      MINIO_ROOT_PASSWORD: minio-secret-key-change-me
+    volumes:
+      - "D:/minio/data/chat:/mnt/data"          # MinIO 数据存储目录挂载到 /mnt/data
+      - "D:/minio/config.env:/etc/config.env" # MinIO 配置文件挂载到 /etc/config.env
+      - "D:/minio/data/certs:/etc/ssl/certs"   # 证书目录挂载到 /etc/ssl/certs
+    ports:
+      - "9000:9000"                       # MinIO 数据服务
+      - "9001:9001"                       # MinIO 控制台服务
+    command: server /mnt/data --console-address ":9001"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"                       # Redis 服务端口
+    command: ["redis-server", "--appendonly", "yes"]
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root           # MySQL Root 用户密码
+      MYSQL_DATABASE: go_chat             # 默认数据库名称
+      MYSQL_USER: app_user                # 应用程序用户
+      MYSQL_PASSWORD: app_password        # 应用程序用户密码
+    ports:
+      - "13306:3306"                      # MySQL 服务端口
+    command:
+      --default-authentication-plugin=mysql_native_password
+
+#  app:
+#    build:
+#      context: .
+#    container_name: app
+#    environment:
+#      APP_ENV: dev
+#      APP_DEBUG: "false"
+#      REDIS_HOST: redis
+#      REDIS_PORT: 6379
+#      MYSQL_HOST: mysql
+#      MYSQL_PORT: 3306
+#      MYSQL_DATABASE: go_chat
+#      MYSQL_USER: app_user
+#      MYSQL_PASSWORD: app_password
+#      MINIO_ENDPOINT: http://minio:9000
+#      MINIO_ACCESS_KEY: myminioadmin
+#      MINIO_SECRET_KEY: minio-secret-key-change-me
+#    depends_on:
+#      - redis
+#      - mysql
+#      - minio
+#    ports:
+#      - "9501:9501"                        # 应用 HTTP 服务
+#      - "9502:9502"                        # 应用 WebSocket 服务
+#    volumes:
+#      - "D:/app:/usr/src/app"              # 挂载项目代码目录到容器内部
+#    command: ["sh", "-c", "go run main.go"]
+
+volumes:
+  minio_data:
+  redis_data:
+  mysql_data:

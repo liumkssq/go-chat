@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-
 	"github.com/nsqio/go-nsq"
 	"go-chat/config"
 )
