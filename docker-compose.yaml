@@ -1,9 +1,8 @@
 ## 定义 docker-compose 版本号[根据docker版本选择]
-version: '3.6'
+version: '3.8'
 
 ## 定义一组服务(或容器)
 services:
-
   ## 定义服务名称[注意:这里不是容器名]
   lumenim_http:
     ## 定义镜像名称
